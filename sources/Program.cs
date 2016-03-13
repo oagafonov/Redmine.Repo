@@ -133,8 +133,14 @@ namespace Remine.Repo {
         private static void LoadFiles(string html) {
             foreach (var file in GetFiles(html)) {
                 try {
-                    _client.DownloadFile(System.Web.HttpUtility.UrlDecode(REPO_URL +"/"+file), System.Web.HttpUtility.UrlDecode(ROOT_FOLDER + "\\" + file.Replace("/", "\\")));
-                    _logger.Info($"загружен файл {file}");
+                    var path = System.Web.HttpUtility.UrlDecode(ROOT_FOLDER + "\\" + file.Replace("/", "\\"));
+                    if (!File.Exists(path)) {
+                        _client.DownloadFile(System.Web.HttpUtility.UrlDecode(REPO_URL + "/" + file), path);
+                        _logger.Info($"загружен файл {file}");
+                    }
+                    else {
+                        _logger.Info($"Файл {file} существует - пропуск");
+                    }
                 }
                 catch (Exception e) {
                     _logger.Error($"ошибка при загрузке файла {file}. Файл не загружен", e);
