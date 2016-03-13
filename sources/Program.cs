@@ -27,7 +27,7 @@ namespace Remine.Repo {
 
                 REPO_URL = args[0].TrimEnd('/');
 
-                ROOT_FOLDER += args[1].TrimEnd('\\') + "\\" + args[1];
+                ROOT_FOLDER += "\\" + args[1].TrimEnd('\\');
 
                 _logger.Info($"текущий каталог {ROOT_FOLDER}");
 
@@ -122,7 +122,7 @@ namespace Remine.Repo {
 
             if (nodes != null) {
                 foreach (var node in nodes) {
-                    var href = node.Attributes["href"].Value;
+                    var href = System.Web.HttpUtility.UrlDecode(node.Attributes["href"].Value);
                     folders.Add(href.Substring(href.IndexOf("show/")).Replace("show/", ""));
                 }
             }
@@ -133,7 +133,7 @@ namespace Remine.Repo {
         private static void LoadFiles(string html) {
             foreach (var file in GetFiles(html)) {
                 try {
-                    _client.DownloadFile(REPO_URL+"/"+file, ROOT_FOLDER + "\\" + file.Replace("/", "\\"));
+                    _client.DownloadFile(System.Web.HttpUtility.UrlDecode(REPO_URL +"/"+file), System.Web.HttpUtility.UrlDecode(ROOT_FOLDER + "\\" + file.Replace("/", "\\")));
                     _logger.Info($"загружен файл {file}");
                 }
                 catch (Exception e) {
